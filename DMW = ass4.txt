@@ -1,0 +1,35 @@
+-- Create the sales_data table
+CREATE TABLE sale_data (
+    id SERIAL PRIMARY KEY,
+    date DATE,
+    product VARCHAR(50),
+    category VARCHAR(50),
+    amount DECIMAL(10, 2)
+);
+
+-- Insert 5 rows into the sales_data table
+INSERT INTO sale_data (date, product, category, amount) VALUES
+('2024-03-01', 'Product A', 'Category X', 100.50),
+('2024-03-02', 'Product B', 'Category Y', 200.25),
+('2024-03-03', 'Product C', 'Category Z', 150.75),
+('2024-03-04', 'Product D', 'Category X', 300.00),
+('2024-03-05', 'Product E', 'Category Y', 250.50);
+
+-- Select all rows from the sales_data table
+SELECT * FROM sale_data WHERE category='Category X';
+
+-- Select total sales amount
+SELECT * FROM sale_data WHERE category = 'Category X' AND product='Product A';
+
+-- Select sales amount by category
+SELECT category, SUM(amount) AS total_sale
+FROM sale_data
+GROUP BY category;
+
+-- Select sales amount by product 
+SELECT product, SUM(amount) AS total_sale
+FROM sale_data
+WHERE category='Category X'
+GROUP BY product;
+
+/*************** sequnce of output: SLICE >DICE> ROLL UP> DRILL DOWN ************/
