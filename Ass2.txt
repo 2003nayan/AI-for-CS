@@ -1,0 +1,41 @@
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier             # Imports the Random Forest Classifier ML model
+
+# Prepare the dummy data (same as before for demonstration)
+data = {
+    'packet_size':      [1600, 1400, 1600, 200, 180, 220, 1600],                        # TCP === (50 to 1500 bytes => Normal),
+    'packet_frequency': [1000, 900, 1100, 50, 40, 60, 1600],                            # TCP === (20 to 200 packets per second => Normal)
+    'protocol_type':    ['TCP', 'UDP', 'TCP', 'UDP', 'UDP', 'TCP', 'UDP'],               # UDP === (100 to 1500 bytes => Normal)
+    'label':            ['DDoS', 'Normal', 'DDoS', 'Normal', 'Normal', 'Normal', 'DDoS']  # UDP === (20 to 1500 PPS => Normal)
+}
+
+df = pd.DataFrame(data)
+df = pd.get_dummies(df, columns=['protocol_type']) # One-hot encoding 0 for tcp, 1 for ucp, and vice-versa. (categorical data)
+
+# Train the model
+X = df.drop('label', axis=1)      # Includes various features
+y = df['label']                   # Includes the answers, like spam or ham.
+
+model = RandomForestClassifier()
+model.fit(X, y)
+
+# Take input from the user
+packet_size = int(input("Enter packet size: "))
+packet_frequency = int(input("Enter packet frequency: "))
+protocol_type_tcp = int(input("Is protocol type TCP? (1 for yes, 0 for no): "))
+protocol_type_udp = 1 - protocol_type_tcp  # complement
+
+# Create a DataFrame with user input
+user_data = pd.DataFrame({
+    'packet_size': [packet_size],
+    'packet_frequency': [packet_frequency],
+    'protocol_type_TCP': [protocol_type_tcp],
+    'protocol_type_UDP': [protocol_type_udp]
+})
+
+# Predict whether it's a DDoS attack or not
+prediction = model.predict(user_data)
+if prediction[0] == 'DDoS':
+    print("The input is classified as a DDoS attack.")
+else:
+    print("The input is classified as normal traffic.")

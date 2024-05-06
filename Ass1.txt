@@ -1,0 +1,41 @@
+import pandas as pd                                             # Used for data manipulation and analysis.
+from sklearn.feature_extraction.text import TfidfVectorizer     # Used for text feature extraction.
+from sklearn.naive_bayes import MultinomialNB                   # Used for classifying
+
+# Sample dataset
+data = {
+    'message': [
+        'Great job on the project, looking forward to seeing the final result!',
+        'Congratulations, you have won a free cruise to the Bahamas! Claim now!',
+        'Don\'t forget our meeting tomorrow at 10 AM.',
+        'Get your exclusive discount code for 50% off on all purchases.',
+        'URGENT: Your account has been compromised. Please update your password.',
+        'Meeting cancelled. We will reschedule for next week.',
+        'Limited time offer: Buy one, get one free on all products.',
+        'Hello, how are you doing today?',
+        'Reminder: Your appointment is scheduled for tomorrow.',
+        'Last chance to avail the early bird discount for the conference.'
+    ],
+    'label': ['ham', 'spam', 'ham', 'spam', 'spam', 'ham', 'spam', 'ham', 'ham', 'spam']
+}
+
+df = pd.DataFrame(data) # Creates a DataFrame (spreadsheet type) for the data given above.
+
+# Data preprocessing    (TF-IDF => Term Frequency-Inverse Document Frequency)
+tfidf_vectorizer = TfidfVectorizer()                # Converts the text data into numerical vectors.
+X = tfidf_vectorizer.fit_transform(df['message'])
+y = df['label']
+
+# Train the Naive Bayes model
+nb_model = MultinomialNB()
+nb_model.fit(X, y)
+
+# Input a new message
+new_message = input("Enter a message: ")
+
+# Transform the new message using the TF-IDF vectorizer
+new_message_tfidf = tfidf_vectorizer.transform([new_message])   # Converts the new text data into numerical vectors.
+
+# Predict the label for the new message
+predicted_label = nb_model.predict(new_message_tfidf)
+print("Predicted Label:", predicted_label[0])
